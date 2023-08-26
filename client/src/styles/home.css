@@ -1,0 +1,32 @@
+.Home {
+  height: 100vh;
+  width: 100%;
+  /* background-color: rgb(201, 156, 33); */
+  background-image: url("https://images.unsplash.com/photo-1586165368502-1bad197a6461?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1258&q=80");
+}
+.buttons {
+  flex-direction: row;
+  justify-content: space-between;
+  width: 100%;
+}
+.Header {
+  display: flex;
+  justify-content: center;
+  font-size: 60px;
+  font-weight: 600;
+  background-image: linear-gradient(to left, #d5df18, #31c09c);
+  color: transparent;
+  background-clip: text;
+}
+p {
+  font-size: 40px;
+  font-weight: 400;
+  background-image: conic-gradient(#553c9a, #ee4b2b, #00c2cb);
+  color: transparent;
+  display: flex;
+  justify-content: center;
+  background-clip: text;
+  -webkit-background-clip: text;
+
+  margin-top: 5%;
+}

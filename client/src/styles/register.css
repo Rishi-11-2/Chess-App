@@ -1,0 +1,71 @@
+@import url("https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap");
+
+/* body {
+  margin: 0;
+  color: wheat;
+  background-color: #ddddf7;
+  font: 600 16px/18px "Poppins", sans-serif;
+} */
+.form {
+  display: flex;
+  flex-direction: column;
+}
+.formWrapper {
+  background-color: wheat;
+  width: 65%;
+  height: 80%;
+  margin-top: 100px;
+  margin-left: 35%;
+  display: flex;
+  overflow: hidden;
+  justify-content: center;
+  align-items: center;
+  max-width: 400px;
+  min-height: 400px;
+  position: relative;
+  box-shadow: 0 12px 15px 0 rgba(0, 0, 0, 0.24),
+    0 17px 50px 0 rgba(0, 0, 0, 0.19);
+}
+input {
+  padding: 10px;
+  margin: 10px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  justify-content: space-evenly;
+  border: none;
+  border-bottom: 2px solid #7b96ec;
+  overflow: hidden;
+}
+input:focus {
+  background-color: lightblue;
+}
+.submit {
+  background-color: #7b96ec;
+  color: white;
+  padding: 10px;
+  font-weight: bold;
+  border: none;
+  cursor: pointer;
+}
+label {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 5%;
+}
+span {
+  color: black;
+  margin-top: 5%;
+  margin-left: 10%;
+}
+h1 {
+  color: black;
+  margin-bottom: 15%;
+}
+.add {
+  image-rendering: crisp-edges;
+  cursor: pointer;
+  width: 35px;
+  margin-left: 5%;
+}
