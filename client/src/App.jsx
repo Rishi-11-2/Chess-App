@@ -6,6 +6,7 @@ import Room from "./components/room";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext";
+import ChessGame from "./components/chessGame";
 function App() {
   const { currentUser } = useContext(AuthContext);
   console.log(currentUser);
@@ -16,22 +17,23 @@ function App() {
     return children;
   };
   return (
-      <Routes>
-        <Route path="/">
-          <Route
-            index
-            element={
-              <ProtectedRoute>
-                <Home />
-              </ProtectedRoute>
-            }
-          />
-          <Route path="login" element={<Login />} />
-          <Route path="register" element={<Register />} />
-          <Route path="game" element={<Game />} />
-          <Route path="rooms/:id" element={<Room />} />
-        </Route>
-      </Routes>
+    <Routes>
+      <Route path="/">
+        <Route
+          index
+          element={
+            <ProtectedRoute>
+              <Home />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="login" element={<Login />} />
+        <Route path="register" element={<Register />} />
+        <Route path="game" element={<Game />} />
+        <Route path="rooms/:id" element={<Room />} />
+        <Route path="chessGame" Component={<ChessGame />} />
+      </Route>
+    </Routes>
   );
 }
 

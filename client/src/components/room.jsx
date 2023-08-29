@@ -1,17 +1,19 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useNavigate } from "react";
 import { useParams } from "react-router-dom";
 import ChessGame from "./chessGame";
 import Game from "./game";
 import socket from "../socket";
 import "../styles/room.css";
 import { AuthContext } from "../context/AuthContext";
-const Room = () => {
+const Room = ({ check }) => {
   const currentUser = useContext(AuthContext);
   const { id } = useParams();
   const [players, setPlayers] = useState({});
   const [play, setPlay] = useState(false);
   const [orientation, setOrientation] = useState(false);
-
+  if (check === true) {
+    setPlay(check);
+  }
   const cleanup = () => {
     setPlayers("");
     setOrientation(false);
@@ -32,13 +34,12 @@ const Room = () => {
   const CopyText = () => {
     setOrientation("white");
     // checkOrientation1();
-    console.log(orientation)
+    console.log(orientation);
     navigator.clipboard.writeText(id);
     // alert("copied the room id");
   };
   return (
     <div>
-      <h1>Hi</h1>
       {play && (
         <ChessGame
           room={id}

@@ -1,12 +1,16 @@
 import { Chessboard } from "react-chessboard";
 import { Chess } from "chess.js";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, useContext } from "react";
 import socket from "../socket";
+import { AuthContext } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const ChessGame = ({ players, room, orientation, cleanup }) => {
-  console.log(orientation);
+  console.log(players);
   const [chess, setChess] = useState();
+  const { currentUser } = useContext(AuthContext);
+  console.log(currentUser);
   const [position, setPosition] = useState("start");
   useEffect(() => {
     setChess(new Chess());
@@ -48,7 +52,7 @@ const ChessGame = ({ players, room, orientation, cleanup }) => {
       to: targetSquare,
       color: chess.turn(),
     };
-    console.log(moveData);
+    // console.log(moveData);
     const move = MakeAMove(moveData);
     if (move == null) return false;
     socket.emit("move", {
@@ -63,7 +67,22 @@ const ChessGame = ({ players, room, orientation, cleanup }) => {
     });
   }, [MakeAMove]);
   return (
-    <>
+    <div>
+      <div
+        style={{
+          paddingLeft: 350,
+        }}
+      >
+        {players
+          .filter((player) => {
+            return player.username !== currentUser.displayName;
+          })
+          .map((player) => (
+            <div>
+              <h3 key={player.id}>{player.username}</h3>
+            </div>
+          ))}
+      </div>
       <div
         className="chessboard"
         style={{
@@ -80,7 +99,7 @@ const ChessGame = ({ players, room, orientation, cleanup }) => {
           boardOrientation={orientation}
         />
       </div>
-    </>
+    </div>
   );
 };
 

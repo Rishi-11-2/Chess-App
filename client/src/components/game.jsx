@@ -41,6 +41,7 @@ const Game = () => {
         setId(roomId);
         setOrientation("white");
         setPlayers(r.players);
+        // navigate(`/rooms/${roomId}`);
       }
     });
   };
