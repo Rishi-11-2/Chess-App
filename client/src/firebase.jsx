@@ -2,6 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getStorage } from "firebase/storage";
 import { getFirestore } from "firebase/firestore";
+// firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyCi7OVX04VxHKwaEBUv3PuVEmZK76I8Wf0",
   authDomain: "chess-5ccef.firebaseapp.com",

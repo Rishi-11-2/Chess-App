@@ -7,7 +7,7 @@ import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 const ChessGame = ({ players, room, orientation, cleanup }) => {
-  console.log(players);
+  // console.log(players);
   const [chess, setChess] = useState();
   const { currentUser } = useContext(AuthContext);
   console.log(currentUser);

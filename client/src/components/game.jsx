@@ -32,7 +32,7 @@ const Game = () => {
     e.preventDefault();
     const roomId = e.target[0].value;
     console.log("hi", roomId);
-    socket.emit("joinRoom", { roomID: roomId }, (r) => {
+    socket.emit("joinRoom", { roomID: roomId }, (r) => {  
       if (r.error) {
         setErr(true);
         console.log("error");

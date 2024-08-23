@@ -9,6 +9,8 @@ export const AuthContextProvider = ({ children }) => {
   useEffect(() => {
     const unsub = onAuthStateChanged(auth, (user) => {
       setCurrentUser(user);
+    },(error)=>{
+      console.error("Error on auth state change :",error)
     });
     return () => {
       unsub();
