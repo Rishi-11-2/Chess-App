@@ -2,12 +2,12 @@ import React, { useState } from "react";
 import { auth, db, storage } from "../firebase";
 import "../styles/register.css";
 import Add from "../img/addAvatar.png";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,Link } from "react-router-dom";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { ref, getDownloadURL, uploadBytesResumable } from "firebase/storage";
 import { doc, setDoc } from "firebase/firestore";
 const Register = () => {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
   const [err, setErr] = useState(null);
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,13 +25,15 @@ const Register = () => {
               displayName,
               photoURL: downloadURL,
             });
+            console.log("Profile updated successfully.");
             await setDoc(doc(db, "users", res.user.uid), {
               uid: res.user.uid,
               displayName,
               email,
               photoURL: downloadURL,
             });
-            // navigate("/");
+            console.log("User registered successfully, navigating to home.");
+            navigate("/");
           } catch (err) {
             console.log(err);
             setErr(true);
@@ -43,7 +45,7 @@ const Register = () => {
       setErr(true);
     }
   };
-  return (
+return (
     <div className="formWrapper">
       <div className="formContainer">
         <h1>Register</h1>
@@ -59,14 +61,18 @@ const Register = () => {
             type="file"
           />
           <label htmlFor="file">
-            <img className="add" src={Add} />
-            <span> Add an Avatar</span>
+            <img className="add" src={Add} alt="Add avatar" />
+            <span>Add an Avatar</span>
           </label>
           <button type="submit" className="submit">
             Register
           </button>
-          {err && <span> Something went wrong</span>}
+          {err && <span>Something went wrong</span>}
         </form>
+        <p className="account-text">
+          Already have an account?
+          <Link to="/login" className="login-link">Login</Link>
+        </p>
       </div>
     </div>
   );

@@ -1,32 +1,86 @@
 .Home {
   height: 100vh;
   width: 100%;
-  /* background-color: rgb(201, 156, 33); */
   background-image: url("https://images.unsplash.com/photo-1586165368502-1bad197a6461?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1258&q=80");
-}
-.buttons {
-  flex-direction: row;
-  justify-content: space-between;
-  width: 100%;
-}
-.Header {
+  background-size: cover;
+  background-position: center;
   display: flex;
   justify-content: center;
-  font-size: 60px;
+  align-items: center;
+}
+
+.Container {
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 2rem;
+  border-radius: 15px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  max-width: 600px;
+  width: 90%;
+}
+
+.Header {
+  font-size: 3rem;
   font-weight: 600;
   background-image: linear-gradient(to left, #d5df18, #31c09c);
   color: transparent;
   background-clip: text;
+  -webkit-background-clip: text;
+  margin-bottom: 1rem;
+  line-height: 1.2;  /* Add line height */
+  padding-bottom: 0.2em;  /* Add padding at the bottom */
 }
+
 p {
-  font-size: 40px;
+  font-size: 1.5rem;
   font-weight: 400;
   background-image: conic-gradient(#553c9a, #ee4b2b, #00c2cb);
   color: transparent;
-  display: flex;
-  justify-content: center;
   background-clip: text;
   -webkit-background-clip: text;
+  margin-bottom: 2rem;
+}
 
-  margin-top: 5%;
+.buttons {
+  display: flex;
+  justify-content: center;
+}
+
+.chess-button {
+  background-image: linear-gradient(to right, #d5df18, #31c09c);
+  color: white;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.chess-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+.chess-button:active {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+  .Header {
+    font-size: 2.5rem;
+  }
+  
+  p {
+    font-size: 1.2rem;
+  }
+  
+  .chess-button {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+  }
 }

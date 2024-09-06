@@ -1,71 +1,114 @@
 @import url("https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap");
 
-/* body {
+body {
   margin: 0;
   color: wheat;
   background-color: #ddddf7;
   font: 600 16px/18px "Poppins", sans-serif;
-} */
+}
+
 .form {
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
+
 .formWrapper {
   background-color: wheat;
-  width: 65%;
-  height: 80%;
-  margin-top: 100px;
-  margin-left: 35%;
-  display: flex;
-  overflow: hidden;
-  justify-content: center;
-  align-items: center;
+  width: 90%;
   max-width: 400px;
-  min-height: 400px;
-  position: relative;
-  box-shadow: 0 12px 15px 0 rgba(0, 0, 0, 0.24),
-    0 17px 50px 0 rgba(0, 0, 0, 0.19);
-}
-input {
-  padding: 10px;
-  margin: 10px;
+  margin: 100px auto;
+  padding: 20px;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
-  position: relative;
-  justify-content: space-evenly;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 12px 15px rgba(0, 0, 0, 0.24), 0 17px 50px rgba(0, 0, 0, 0.19);
+}
+
+input {
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 10px;
   border: none;
   border-bottom: 2px solid #7b96ec;
-  overflow: hidden;
+  background-color: #fff;
 }
+
 input:focus {
   background-color: lightblue;
 }
+
 .submit {
   background-color: #7b96ec;
   color: white;
-  padding: 10px;
+  padding: 6px 12px;
   font-weight: bold;
   border: none;
+  border-radius: 6px;
   cursor: pointer;
+  margin-top: 10px;
+  transition: all 0.3s ease;
+  font-size: 0.75em;
 }
+
+.submit:hover {
+  background-color: #5a78d9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.submit:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+}
+
 label {
   display: flex;
-  flex-direction: row;
-  margin-bottom: 5%;
+  align-items: center;
+  margin-bottom: 20px;
 }
+
 span {
   color: black;
-  margin-top: 5%;
-  margin-left: 10%;
+  margin-left: 10px;
 }
+
 h1 {
   color: black;
-  margin-bottom: 15%;
+  margin-bottom: 20px;
 }
+
 .add {
-  image-rendering: crisp-edges;
-  cursor: pointer;
   width: 35px;
-  margin-left: 5%;
+  height: 35px;
+  margin-right: 10px;
+}
+
+.login-link-container {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.login-link {
+  color: #007bff;
+  text-decoration: none;
+  font-size: 0.7em;
+}
+
+.login-link:hover {
+  text-decoration: underline;
+  color: #0056b3;
+}
+
+.account-text {
+  font-size: 0.8em;
+  color: #333;
+  margin-top: 15px;
+}
+
+.account-text .login-link {
+  font-size: 1em;
+  margin-left: 5px;
 }

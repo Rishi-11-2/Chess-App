@@ -1,15 +1,17 @@
 @import url("https://fonts.googleapis.com/css?family=Poppins:400,500,600,700&display=swap");
 
-/* body {
+body {
   margin: 0;
   color: wheat;
   background-color: #ddddf7;
   font: 600 16px/18px "Poppins", sans-serif;
-} */
+}
+
 .form {
   display: flex;
   flex-direction: column;
 }
+
 .formWrapper {
   background-color: wheat;
   width: 65%;
@@ -26,6 +28,7 @@
   box-shadow: 0 12px 15px 0 rgba(0, 0, 0, 0.24),
     0 17px 50px 0 rgba(0, 0, 0, 0.19);
 }
+
 input {
   padding: 10px;
   margin: 10px;
@@ -38,9 +41,11 @@ input {
   border-bottom: 2px solid #7b96ec;
   overflow: hidden;
 }
+
 input:focus {
   background-color: lightblue;
 }
+
 .submit {
   background-color: #7b96ec;
   color: white;
@@ -49,25 +54,49 @@ input:focus {
   border: none;
   cursor: pointer;
 }
+
 label {
   display: flex;
   flex-direction: row;
   margin-bottom: 5%;
 }
+
 span {
   color: black;
   margin-top: 5%;
   margin-left: 10%;
 }
+
 h1 {
   color: black;
   margin-bottom: 15%;
   display: flex;
   justify-content: center;
 }
+
 .add {
   image-rendering: crisp-edges;
   cursor: pointer;
   width: 35px;
   margin-left: 5%;
+}
+
+/* New styles for login and register links */
+.account-text {
+  font-size: 0.8em;
+  color: #333;
+  margin-top: 15px;
+  text-align: center;
+}
+
+.account-link {
+  color: #007bff;
+  text-decoration: none;
+  font-size: 0.9em;
+  margin-left: 5px;
+}
+
+.account-link:hover {
+  text-decoration: underline;
+  color: #0056b3;
 }

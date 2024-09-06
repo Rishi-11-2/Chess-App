@@ -22,11 +22,11 @@ const Home = () => {
   return (
     <div className="Home">
       <div className="Container">
-        <div className="Header">Home</div>
-        <p> Welcome To Chess </p>
+        <h1 className="Header">Welcome to Chess</h1>
+        <p>Ready to challenge your mind?</p>
         <div className="buttons">
-          <button onClick={handleClick} className="">
-            Go to the chess App
+          <button onClick={handleClick} className="chess-button">
+            Start Playing Chess
           </button>
         </div>
       </div>
