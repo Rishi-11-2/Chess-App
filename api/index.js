@@ -10,81 +10,123 @@ app.use(express.json());
 const { Server } = require("socket.io");
 const server = http.createServer(app);
 const io = new Server(server, {
-  cors: "*", // dont forget it otherwise it will not allow connection from client side
+  cors: "*", // Allow connections from client side
 });
 
 app.post("/data", (req, res) => {
-  // console.log(req.body.user);
   res.send("hi");
 });
 app.get("/", (req, res) => {
   res.render("home");
 });
+
+// In-memory rooms data
 const rooms = new Map();
+
 io.on("connection", (socket) => {
   console.log("socket connected", socket.id);
+
+  // Store the username of the connected player
   socket.on("username", (username) => {
-    // console.log(username);
     socket.data.username = username;
   });
+
+  // Handle room creation
   socket.on("createRoom", async (callback) => {
-    const roomID = uuid();
-    console.log("room creation", roomID);
+    const roomID = uuid();  // Generate a unique room ID
+    console.log("Room created:", roomID);
+    
+    // Add the creator to the room and set up the room in memory
     await socket.join(roomID);
     rooms.set(roomID, {
       roomID,
       players: [{ id: socket.id, username: socket.data?.username }],
     });
-    callback(roomID);
+    
+    callback(roomID); // Send the room ID back to the client
   });
 
+  // Handle joining a room
   socket.on("joinRoom", async (args, callback) => {
-    const room = rooms.get(args.roomID);
-    console.log(room);
+    const room = rooms.get(args.roomID);  // Get the room from memory
+    console.log("Joining room:", room);
+
+    // Error checking for room availability
     let error, message;
     if (!room) {
       error = true;
-      message = "No such room exist";
-    } else if (room.length < 0) {
+      message = "No such room exists";
+    } else if (room.players.length <= 0) {
       error = true;
       message = "Room is empty";
-    } else if (room.length > 2) {
+    } else if (room.players.length >= 2) {
       error = true;
-      message = "Room is full.  You cannot join";
+      message = "Room is full. You cannot join.";
     }
 
+    // If there's an error, send it to the client
     if (error) {
       if (callback) {
-        callback({
-          error,
-          message,
-        });
+        callback({ error, message });
       }
       return;
     }
 
+    // Join the player to the room
     await socket.join(args.roomID);
 
-    const roomUpdate = {
+    // Update the room's player list
+    const updatedRoom = {
       ...room,
       players: [
         ...room.players,
-        {
-          id: socket.id,
-          username: socket.data?.username,
-        },
+        { id: socket.id, username: socket.data?.username },
       ],
     };
-    callback(roomUpdate);
-    rooms.set(args.roomID, roomUpdate);
-    io.in(args.roomID).emit("opponent joined", roomUpdate);
+
+    // Store the updated room data
+    rooms.set(args.roomID, updatedRoom);
+
+    // Notify the new player about the updated room state
+    callback(updatedRoom);
+
+    // Emit an event to the room that the opponent has joined
+    io.in(args.roomID).emit("opponentJoined", updatedRoom);
+
+    // If two players have joined, emit the startGame event
+    if (updatedRoom.players.length === 2) {
+      io.in(args.roomID).emit("startGame", updatedRoom);
+    }
   });
 
+  // Handle move synchronization between players
   socket.on("move", (data) => {
-    io.in(data.room).emit("move", data.move);
+    console.log("Move received:", data);
+    io.in(data.room).emit("move", data.move);  // Broadcast the move to everyone in the room
+  });
+
+  // Handle disconnects and room cleanup
+  socket.on("disconnect", () => {
+    console.log("Player disconnected:", socket.id);
+
+    // Check all rooms and remove the player if they are in any room
+    for (let [roomID, room] of rooms) {
+      const playerIndex = room.players.findIndex((p) => p.id === socket.id);
+
+      if (playerIndex !== -1) {
+        room.players.splice(playerIndex, 1);  // Remove the player from the room
+
+        if (room.players.length === 0) {
+          rooms.delete(roomID);  // Delete the room if empty
+        } else {
+          rooms.set(roomID, room);  // Update the room if players remain
+          io.in(roomID).emit("playerLeft", room);  // Notify the remaining player
+        }
+      }
+    }
   });
 });
 
 server.listen(8000, () => {
-  console.log("listening on port 8000");
+  console.log("Server is listening on port 8000");
 });

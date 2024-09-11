@@ -1,33 +1,82 @@
-h1 {
-  margin: 0% !important;
+body {
+  background-color: #f0f0f0;
+  font-family: 'Arial', sans-serif;
 }
+
 .Invite {
   position: relative;
   width: 100%;
   height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #ffffff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
-#sample {
-  position: absolute;
-  top: 50px;
-  right: 16px;
-  padding: 10px;
-  color: black;
+
+h1 {
+  margin: 0 0 20px 0;
+  color: #333;
+  font-size: 2.5em;
 }
+
 h5 {
-  position: absolute;
-  top: 0px;
-  right: 16px;
+  color: #666;
+  margin-bottom: 15px;
 }
+
+#sample {
+  background-color: #f8f8f8;
+  border: 2px solid #ddd;
+  border-radius: 5px;
+  padding: 15px;
+  font-size: 1.2em;
+  color: #333;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
 .copy {
   cursor: pointer;
-  width: 70px;
-  height: 40px;
-  position: absolute;
-  top: 50px;
-  right: 16px;
-  margin-left: 10px;
-  background-color: rgb(23, 173, 211);
+  width: 120px;
+  height: 50px;
+  background-color: #1eb2f2;
   color: white;
-  border-radius: 10px;
-  box-shadow: grey;
+  border: none;
+  border-radius: 25px;
+  font-size: 1em;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.copy:hover {
+  background-color: #1691c7;
+}
+
+.copy:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+  .Invite {
+    padding: 20px;
+  }
+
+  h1 {
+    font-size: 2em;
+  }
+
+  #sample {
+    font-size: 1em;
+    padding: 10px;
+  }
+
+  .copy {
+    width: 100px;
+    height: 40px;
+    font-size: 0.9em;
+  }
 }
