@@ -6,6 +6,8 @@ import socket from "../socket";
 import { AuthContext } from "../context/AuthContext";
 import { ThemeContext } from "../context/ThemeContext";
 import { useNavigate } from "react-router-dom";
+import { db } from "../firebase";
+import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 
 const ChessGame = ({ players, room, cleanup, timeControl }) => {
   // console.log(players);
@@ -80,12 +82,50 @@ const ChessGame = ({ players, room, cleanup, timeControl }) => {
   }, [currentUser.displayName]);
   useEffect(() => {
     if (over) {
+      // Save history entry for current user
+      (async () => {
+        const opponentPlayer = players.find(p => p.username !== currentUser.displayName);
+        const opponent = opponentPlayer?.username || 'Unknown';
+        let result;
+        if (
+          over === 'Draw' ||
+          over.includes('Draw') ||
+          over.includes('Stalemate') ||
+          over.includes('Insufficient Material')
+        ) {
+          result = 'Draw';
+        } else if (over === 'You win' || over.includes(`${orientation} wins`)) {
+          result = 'Win';
+        } else {
+          result = 'Loss';
+        }
+        console.debug('Saving match history:', {
+          player: currentUser.displayName,
+          opponent,
+          result,
+          timeControl
+        });
+        try {
+          const entry = {
+            date: serverTimestamp(),
+            player: currentUser.displayName,
+            playerId: currentUser.uid,
+            opponent,
+            result,
+            timeControl
+          };
+          const docRef = await addDoc(collection(db, 'matchHistory'), entry);
+          console.debug('Match history saved, doc ID:', docRef.id);
+        } catch (e) {
+          console.error('Error saving history', e);
+        }
+      })();
       setTimeout(() => {
         cleanup();
         navigate('/');
       }, 3000);
     }
-  }, [over, cleanup, navigate]);
+  }, [over, cleanup, navigate, players, currentUser.displayName, orientation, timeControl]);
   // Initialize timers (seconds)
   const [whiteTime, setWhiteTime] = useState(timeControl * 60);
   const [blackTime, setBlackTime] = useState(timeControl * 60);
@@ -119,6 +159,48 @@ const ChessGame = ({ players, room, cleanup, timeControl }) => {
     }, 1000);
     return () => clearInterval(timerId);
   }, [chess, over]);
+
+  // Highlight possible moves and checkmated king square
+  const [selectedSquare, setSelectedSquare] = useState(null);
+  const [possibleMoves, setPossibleMoves] = useState([]);
+  const [checkmatedKingSquare, setCheckmatedKingSquare] = useState(null);
+
+  // Determine and mark checkmated king square
+  useEffect(() => {
+    if (over.includes('Checkmate') && chess) {
+      const losingColor = over.includes('white wins') ? 'b' : 'w';
+      const boardArr = chess.board();
+      for (let r = 0; r < 8; r++) {
+        for (let f = 0; f < 8; f++) {
+          const piece = boardArr[r][f];
+          if (piece?.type === 'k' && piece.color === losingColor) {
+            setCheckmatedKingSquare('abcdefgh'[f] + (8 - r));
+            return;
+          }
+        }
+      }
+    }
+  }, [over, chess]);
+
+  // Handle square click for legal-move highlighting
+  const handleSquareClick = useCallback((square) => {
+    if (!chess) return;
+    const moves = chess.moves({ square, verbose: true });
+    if (moves.length) {
+      setSelectedSquare(square);
+      setPossibleMoves(moves.map(m => m.to));
+    } else {
+      setSelectedSquare(null);
+      setPossibleMoves([]);
+    }
+  }, [chess]);
+
+  // Build custom square styles
+  const squareStyles = {};
+  if (selectedSquare) squareStyles[selectedSquare] = { backgroundColor: 'rgba(246,246,105,0.6)' };
+  possibleMoves.forEach(sq => { squareStyles[sq] = { backgroundColor: 'rgba(246,246,105,0.6)' }; });
+  if (checkmatedKingSquare) squareStyles[checkmatedKingSquare] = { boxShadow: 'inset 0 0 0 4px red' };
+
   return (
     <div style={{ position: 'relative', minHeight: '100vh', backgroundColor: darkMode ? '#2c3e50' : '#fff', transition: 'background-color 0.3s', padding: '20px' }}>
       {/* Resign button top-left */}
@@ -189,6 +271,8 @@ const ChessGame = ({ players, room, cleanup, timeControl }) => {
         <Chessboard
           position={position}
           onPieceDrop={onDrop}
+          onSquareClick={handleSquareClick}
+          customSquareStyles={squareStyles}
           boardOrientation={orientation}
           boardWidth={700}
           boardStyle={{ borderRadius: '12px', boxShadow: '0 5px 15px rgba(0,0,0,0.4)' }}

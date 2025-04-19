@@ -4,7 +4,8 @@ import Register from "./pages/Register";
 import Game from "./components/game";
 import Room from "./components/room";
 import ChessGame from "./components/chessGame";
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import History from "./components/History";
+import { Routes, Route, Navigate, useLocation, Link } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext";
 import { ThemeContext } from "./context/ThemeContext.jsx";
@@ -25,7 +26,10 @@ function App() {
   return (
     <div className="app-container">
       {location.pathname !== "/" && (
-        <header style={{ width: "100%", display: "flex", justifyContent: "flex-end", padding: "1rem" }}>
+        <header style={{ width: "100%", display: "flex", alignItems: "center", padding: "1rem" }}>
+          <Link to="/history" style={{ marginRight: "auto", fontSize: "16px", color: darkMode ? "#ecf0f1" : "#2c3e50", textDecoration: "none" }}>
+            History
+          </Link>
           <button onClick={toggleDarkMode} className="theme-toggle-btn">
             {darkMode ? "Light Mode" : "Dark Mode"}
           </button>
@@ -39,6 +43,7 @@ function App() {
           <Route path="/game" element={<ProtectedRoute><Game /></ProtectedRoute>} />
           <Route path="/rooms/:id" element={<ProtectedRoute><Room /></ProtectedRoute>} />
           <Route path="/chessGame" element={<ProtectedRoute><ChessGame /></ProtectedRoute>} />
+          <Route path="/history" element={<ProtectedRoute><History /></ProtectedRoute>} />
         </Routes>
       </main>
     </div>
