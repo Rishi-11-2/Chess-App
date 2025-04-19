@@ -1,36 +1,46 @@
-import React, { useContext, useEffect, useState, useNavigate } from "react";
-import { useParams } from "react-router-dom";
+import React, { useContext, useEffect, useState } from "react";
+import { useParams, useLocation } from "react-router-dom";
 import ChessGame from "./chessGame";
 import Game from "./game";
 import socket from "../socket";
 import "../styles/room.css";
 import { AuthContext } from "../context/AuthContext";
-const Room = ({ check }) => {
-  const currentUser = useContext(AuthContext);
+
+const Room = () => {
+  const { currentUser } = useContext(AuthContext);
+  const location = useLocation();
   const { id } = useParams();
-  const [players, setPlayers] = useState({});
-  const [play, setPlay] = useState(false);
-  const [orientation, setOrientation] = useState(false);
-  if (check === true) {
-    setPlay(check);
-  }
-  const cleanup = () => {
-    setPlayers("");
-    setOrientation(false);
-    setPlay(false);
-  };
+  const [players, setPlayers] = useState([]);
+  const [orientation, setOrientation] = useState("white");
+
+  // Set players from navigation state (if present)
+  useEffect(() => {
+    if (location.state?.players) {
+      setPlayers(location.state.players);
+    }
+  }, [location.state]);
+
+  // Listen for opponent joined
   useEffect(() => {
     socket.on("opponent joined", (roomData) => {
-      console.log("opponent joined", roomData, currentUser);
       setPlayers(roomData.players);
-      setPlay(true);
-      setOrientation("black");
-      console.log(players);
     });
-    return () => {
-      socket.off("opponent joined");
-    };
+    return () => socket.off("opponent joined");
   }, []);
+
+  // Set orientation based on current user
+  useEffect(() => {
+    if (players.length) {
+      const userPlayer = players.find(p => p.username === currentUser.displayName);
+      setOrientation(userPlayer?.orientation || "white");
+    }
+  }, [players, currentUser.displayName]);
+
+  const cleanup = () => {
+    setPlayers([]);
+    setOrientation("white");
+  };
+
   const CopyText = () => {
     setOrientation("white");
     // checkOrientation1();
@@ -38,9 +48,10 @@ const Room = ({ check }) => {
     navigator.clipboard.writeText(id);
     // alert("copied the room id");
   };
+
   return (
     <div>
-      {play && (
+      {players.length === 2 ? (
         <ChessGame
           room={id}
           players={players}
@@ -48,8 +59,7 @@ const Room = ({ check }) => {
           orientation={orientation}
           cleanup={cleanup}
         />
-      )}
-      {!play && (
+      ) : (
         <div className="Invite">
           <h5>Invite others to join </h5>
           <div id="sample">{id}</div>

@@ -7,10 +7,16 @@ import { AuthContext } from "../context/AuthContext";
 import { ThemeContext } from "../context/ThemeContext";
 import { useNavigate } from "react-router-dom";
 
-const ChessGame = ({ players, room, orientation, cleanup }) => {
+const ChessGame = ({ players, room, cleanup }) => {
   // console.log(players);
   const [chess, setChess] = useState();
   const { currentUser } = useContext(AuthContext);
+  // Determine this player's orientation (match by socket ID first, fallback to username)
+  let userPlayer = players.find(p => p.id === socket.id);
+  if (!userPlayer) {
+    userPlayer = players.find(p => p.username === currentUser.displayName);
+  }
+  const orientation = userPlayer?.orientation || 'white';
   console.log(currentUser);
   const [position, setPosition] = useState("start");
   useEffect(() => {
@@ -27,7 +33,7 @@ const ChessGame = ({ players, room, orientation, cleanup }) => {
         console.log("making a move", move);
         const result = chess.move(move);
         setPosition(chess.fen());
-        if (chess.isGameOver) {
+        if (chess.isGameOver()) {
           if (chess.isCheckmate()) {
             setOver(
               `Checkmate !!! ${chess.turn() === "w" ? "black" : "white"} wins`
@@ -49,11 +55,10 @@ const ChessGame = ({ players, room, orientation, cleanup }) => {
     [chess]
   );
   const onDrop = (sourceSquare, targetSquare) => {
-    if (chess.turn() !== orientation[0]) return false; // <- 1 prohibit player from moving piece of other player
+    if (chess.turn() !== orientation[0]) return false; // only allow own color
     const moveData = {
       from: sourceSquare,
       to: targetSquare,
-      color: chess.turn(),
     };
     // console.log(moveData);
     const move = MakeAMove(moveData);

@@ -33,42 +33,12 @@ function App() {
       )}
       <main style={{ width: "100%", flex: 1, display: "flex", justifyContent: "center", alignItems: "center" }}>
         <Routes>
-          <Route path="/">
-            <Route
-              index
-              element={
-                <ProtectedRoute>
-                  <Home />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="login" element={<Login />} />
-            <Route path="register" element={<Register />} />
-            <Route
-              path="game"
-              element={
-                <ProtectedRoute>
-                  <Game />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="rooms/:id"
-              element={
-                <ProtectedRoute>
-                  <Room />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="chessGame"
-              element={
-                <ProtectedRoute>
-                  <ChessGame />
-                </ProtectedRoute>
-              }
-            />
-          </Route>
+          <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/game" element={<ProtectedRoute><Game /></ProtectedRoute>} />
+          <Route path="/rooms/:id" element={<ProtectedRoute><Room /></ProtectedRoute>} />
+          <Route path="/chessGame" element={<ProtectedRoute><ChessGame /></ProtectedRoute>} />
         </Routes>
       </main>
     </div>
