@@ -4,12 +4,15 @@ import Register from "./pages/Register";
 import Game from "./components/game";
 import Room from "./components/room";
 import ChessGame from "./components/chessGame";
-import { Routes, Route, Navigate } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext";
+import { ThemeContext } from "./context/ThemeContext.jsx";
 
 function App() {
   const { currentUser } = useContext(AuthContext);
+  const { darkMode, toggleDarkMode } = useContext(ThemeContext);
+  const location = useLocation();
   console.log(currentUser);
 
   const ProtectedRoute = ({ children }) => {
@@ -20,44 +23,55 @@ function App() {
   };
 
   return (
-    <Routes>
-      <Route path="/">
-        <Route
-          index
-          element={
-            <ProtectedRoute>
-              <Home />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="login" element={<Login />} />
-        <Route path="register" element={<Register />} />
-        <Route
-          path="game"
-          element={
-            <ProtectedRoute>
-              <Game />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="rooms/:id"
-          element={
-            <ProtectedRoute>
-              <Room />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="chessGame"
-          element={
-            <ProtectedRoute>
-              <ChessGame />
-            </ProtectedRoute>
-          }
-        />
-      </Route>
-    </Routes>
+    <div className="app-container">
+      {location.pathname !== "/" && (
+        <header style={{ width: "100%", display: "flex", justifyContent: "flex-end", padding: "1rem" }}>
+          <button onClick={toggleDarkMode} className="theme-toggle-btn">
+            {darkMode ? "Light Mode" : "Dark Mode"}
+          </button>
+        </header>
+      )}
+      <main style={{ width: "100%", flex: 1, display: "flex", justifyContent: "center", alignItems: "center" }}>
+        <Routes>
+          <Route path="/">
+            <Route
+              index
+              element={
+                <ProtectedRoute>
+                  <Home />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="login" element={<Login />} />
+            <Route path="register" element={<Register />} />
+            <Route
+              path="game"
+              element={
+                <ProtectedRoute>
+                  <Game />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="rooms/:id"
+              element={
+                <ProtectedRoute>
+                  <Room />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="chessGame"
+              element={
+                <ProtectedRoute>
+                  <ChessGame />
+                </ProtectedRoute>
+              }
+            />
+          </Route>
+        </Routes>
+      </main>
+    </div>
   );
 }
 
