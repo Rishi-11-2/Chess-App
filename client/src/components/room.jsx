@@ -1,7 +1,6 @@
-import React, { useContext, useEffect, useState } from "react";
+ import React, { useContext, useEffect, useState } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import ChessGame from "./chessGame";
-import Game from "./game";
 import socket from "../socket";
 import "../styles/room.css";
 import { AuthContext } from "../context/AuthContext";
@@ -10,15 +9,13 @@ const Room = () => {
   const { currentUser } = useContext(AuthContext);
   const location = useLocation();
   const { id } = useParams();
-  const [players, setPlayers] = useState([]);
+  const [players, setPlayers] = useState(location.state?.players || []);
   const [orientation, setOrientation] = useState("white");
+  // Time control in minutes (default 5)
+  const [timeControl, setTimeControl] = useState(location.state?.timeControl || 5);
 
-  // Set players from navigation state (if present)
-  useEffect(() => {
-    if (location.state?.players) {
-      setPlayers(location.state.players);
-    }
-  }, [location.state]);
+  // Players updated via socket events
+  // on create/join the server emits opponent joined, populating players
 
   // Listen for opponent joined
   useEffect(() => {
@@ -27,6 +24,11 @@ const Room = () => {
     });
     return () => socket.off("opponent joined");
   }, []);
+
+  // Update timeControl if passed via navigation
+  useEffect(() => {
+    if (location.state?.timeControl) setTimeControl(location.state.timeControl);
+  }, [location.state?.timeControl]);
 
   // Set orientation based on current user
   useEffect(() => {
@@ -55,9 +57,8 @@ const Room = () => {
         <ChessGame
           room={id}
           players={players}
-          username={currentUser}
-          orientation={orientation}
           cleanup={cleanup}
+          timeControl={timeControl}
         />
       ) : (
         <div className="Invite">

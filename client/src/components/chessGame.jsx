@@ -7,7 +7,7 @@ import { AuthContext } from "../context/AuthContext";
 import { ThemeContext } from "../context/ThemeContext";
 import { useNavigate } from "react-router-dom";
 
-const ChessGame = ({ players, room, cleanup }) => {
+const ChessGame = ({ players, room, cleanup, timeControl }) => {
   // console.log(players);
   const [chess, setChess] = useState();
   const { currentUser } = useContext(AuthContext);
@@ -56,23 +56,21 @@ const ChessGame = ({ players, room, cleanup }) => {
   );
   const onDrop = (sourceSquare, targetSquare) => {
     if (chess.turn() !== orientation[0]) return false; // only allow own color
-    const moveData = {
-      from: sourceSquare,
-      to: targetSquare,
-    };
-    // console.log(moveData);
+    const moveData = { from: sourceSquare, to: targetSquare };
     const move = MakeAMove(moveData);
     if (move == null) return false;
-    socket.emit("move", {
-      move,
-      room,
-    });
+    // Broadcast move and timers for synchronization
+    socket.emit("move", { move, room, whiteTime, blackTime });
     return true;
   };
   useEffect(() => {
-    socket.on("move", (move) => {
+    // Receive move and sync clocks
+    socket.on("move", ({ move, whiteTime: wTime, blackTime: bTime }) => {
       MakeAMove(move);
+      setWhiteTime(wTime);
+      setBlackTime(bTime);
     });
+    return () => socket.off("move");
   }, [MakeAMove]);
   useEffect(() => {
     socket.on('resign', ({ winner }) => {
@@ -88,8 +86,41 @@ const ChessGame = ({ players, room, cleanup }) => {
       }, 3000);
     }
   }, [over, cleanup, navigate]);
+  // Initialize timers (seconds)
+  const [whiteTime, setWhiteTime] = useState(timeControl * 60);
+  const [blackTime, setBlackTime] = useState(timeControl * 60);
+  // Format mm:ss
+  const formatTime = secs => {
+    const m = Math.floor(secs / 60).toString().padStart(2, '0');
+    const s = (secs % 60).toString().padStart(2, '0');
+    return `${m}:${s}`;
+  };
+  // Handle timeout: emit resign
+  const handleTimeout = () => {
+    socket.emit('resign', room);
+  };
+  // Countdown timer
+  useEffect(() => {
+    if (!chess) return;
+    const timerId = setInterval(() => {
+      if (over) return;
+      const turnColor = chess.turn() === 'w' ? 'white' : 'black';
+      if (turnColor === 'white') {
+        setWhiteTime(prev => {
+          if (prev <= 1) { handleTimeout(); return 0; }
+          return prev - 1;
+        });
+      } else {
+        setBlackTime(prev => {
+          if (prev <= 1) { handleTimeout(); return 0; }
+          return prev - 1;
+        });
+      }
+    }, 1000);
+    return () => clearInterval(timerId);
+  }, [chess, over]);
   return (
-    <div style={{ position: 'relative', minHeight: '100vh', backgroundColor: darkMode ? '#2c3e50' : '#fff', transition: 'background-color 0.3s' }}>
+    <div style={{ position: 'relative', minHeight: '100vh', backgroundColor: darkMode ? '#2c3e50' : '#fff', transition: 'background-color 0.3s', padding: '20px' }}>
       {/* Resign button top-left */}
       <button onClick={() => socket.emit('resign', room)}
         style={{
@@ -124,13 +155,16 @@ const ChessGame = ({ players, room, cleanup }) => {
       <div
         className="chessboard"
         style={{
-          width: 700,
           display: "flex",
+          flexDirection: "column",
           alignItems: "center",
-          justifyContent: "center",
-          paddingLeft: 350,
+          width: "100%",
+          maxWidth: "700px",
+          margin: "0 auto",
+          gap: "16px",
         }}
       >
+        {/* Result message */}
         {over && (
           <div style={{
             textAlign: 'center', marginBottom: '24px', fontSize: '24px',
@@ -140,6 +174,18 @@ const ChessGame = ({ players, room, cleanup }) => {
             {over}
           </div>
         )}
+        {/* Timers */}
+        <div style={{
+          display: "flex",
+          justifyContent: "space-between",
+          width: "100%",
+          fontSize: "18px",
+          color: darkMode ? "#ecf0f1" : "#2c3e50"
+        }}>
+          <span>White: {formatTime(whiteTime)}</span>
+          <span>Black: {formatTime(blackTime)}</span>
+        </div>
+        {/* Chessboard */}
         <Chessboard
           position={position}
           onPieceDrop={onDrop}

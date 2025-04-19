@@ -46,32 +46,40 @@ io.on("connection", (socket) => {
     // console.log(username);
     socket.data.username = username;
   });
-  socket.on("createRoom", async (callback) => {
+  // Create room with timeControl
+  socket.on("createRoom", async (timeControl, callback) => {
     const roomID = uuid();
     console.log("room creation", roomID);
     await socket.join(roomID);
+    // Initialize room with timeControl
     rooms.set(roomID, {
       roomID,
-      players: [{ id: socket.id, username: socket.data?.username, orientation:"white" }],
+      players: [{ id: socket.id, username: socket.data?.username, orientation: "white" }],
+      timeControl
     });
     callback(roomID);
   });
 
+  // Join room and emit opponent joined with timeControl
   socket.on("joinRoom", async (args, callback) => {
-    const room = rooms.get(args.roomID);
-    if (!room) return callback({ error: true, message: "Room not found" });
-    if (room.players.length >= 2) return callback({ error: true, message: "Room is full" });
+    const roomObj = rooms.get(args.roomID);
+    if (!roomObj) return callback({ error: true, message: "Room not found" });
+    if (roomObj.players.length >= 2) return callback({ error: true, message: "Room is full" });
 
     await socket.join(args.roomID);
     const newPlayer = { id: socket.id, username: socket.data?.username, orientation: "black" };
-    const roomUpdate = { ...room, players: [...room.players, newPlayer] };
-    rooms.set(args.roomID, roomUpdate);
-    callback(roomUpdate);
-    io.in(args.roomID).emit("opponent joined", roomUpdate);
+    const updatedPlayers = [...roomObj.players, newPlayer];
+    const updatedRoom = { roomID: roomObj.roomID, players: updatedPlayers, timeControl: roomObj.timeControl };
+    rooms.set(args.roomID, updatedRoom);
+    // Send ack with players and timeControl
+    callback({ players: updatedPlayers, timeControl: roomObj.timeControl });
+    // Notify both players
+    io.in(args.roomID).emit("opponent joined", { players: updatedPlayers, timeControl: roomObj.timeControl });
   });
 
   socket.on("move", (data) => {
-    io.in(data.room).emit("move", data.move);
+    // Broadcast move along with timers for synchronization
+    io.in(data.room).emit("move", data);
   });
   socket.on("resign", (roomID) => {
     const room = rooms.get(roomID);
