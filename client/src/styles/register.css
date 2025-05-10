@@ -64,6 +64,27 @@ input:focus {
   box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
 }
 
+/* Google button styling */
+.submit.google {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+  color: #444;
+  border: 1px solid #ddd;
+  padding: 8px 12px;
+  margin-top: 10px;
+  font-size: 0.9em;
+}
+.submit.google:hover {
+  background-color: #f7f7f7;
+}
+.google-icon {
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
+}
+
 label {
   display: flex;
   align-items: center;

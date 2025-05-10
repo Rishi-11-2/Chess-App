@@ -1,6 +1,6 @@
 import React, { useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
-import socket from '../socket';
+import socket from '../services/socket';
 
 export default function Invite({ roomID }) {
   const { currentUser } = useContext(AuthContext);

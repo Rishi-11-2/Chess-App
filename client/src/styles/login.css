@@ -55,6 +55,22 @@ input:focus {
   cursor: pointer;
 }
 
+.submit.google {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+  color: #444;
+  border: 1px solid #ddd;
+  padding: 8px 12px;
+  margin-top: 10px;
+  font-size: 0.9em;
+}
+
+.submit.google:hover {
+  background-color: #f7f7f7;
+}
+
 label {
   display: flex;
   flex-direction: row;
@@ -79,6 +95,12 @@ h1 {
   cursor: pointer;
   width: 35px;
   margin-left: 5%;
+}
+
+.google-icon {
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
 }
 
 /* New styles for login and register links */
